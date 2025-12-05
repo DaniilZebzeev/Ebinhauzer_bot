@@ -1,0 +1,99 @@
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: ebbinghaus_postgres
+    environment:
+      POSTGRES_DB: ebbinghaus_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=ru_RU.UTF-8 --lc-ctype=ru_RU.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d ebbinghaus_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Telegram бот приложение
+  bot:
+    build: .
+    container_name: ebbinghaus_bot
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Telegram Bot Token (обязательно установить)
+      - BOT_TOKEN=${BOT_TOKEN}
+      
+      # URL для webhook (опционально, для продакшна)
+      - WEBHOOK_URL=${WEBHOOK_URL:-}
+      
+      # База данных
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/ebbinghaus_db
+      
+      # Настройки приложения
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - DEBUG=${DEBUG:-false}
+      
+      # Часовой пояс и уведомления
+      - DEFAULT_TIMEZONE=Asia/Yekaterinburg
+      - NOTIFICATION_TIME=07:00
+    volumes:
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis для кеширования (опционально)
+  redis:
+    image: redis:7-alpine
+    container_name: ebbinghaus_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx для проксирования (опционально для продакшна)
+  nginx:
+    image: nginx:alpine
+    container_name: ebbinghaus_nginx
+    depends_on:
+      - bot
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
