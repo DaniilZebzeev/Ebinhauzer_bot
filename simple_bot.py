@@ -14,9 +14,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Токен бота
-BOT_TOKEN = "8203884714:AAHDI2IimFQHL7-LDUhjNRFkb6hZCvxTe2U"
-
 
 class SimpleBot:
     def __init__(self):
