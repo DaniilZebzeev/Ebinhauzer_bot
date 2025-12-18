@@ -11,7 +11,6 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Устанавливаем переменные окружения
-os.environ['BOT_TOKEN'] = '8203884714:AAHDI2IimFQHL7-LDUhjNRFkb6hZCvxTe2U'
 os.environ['DATABASE_URL'] = 'postgresql://user:pass@localhost:5432/ebbinghaus_db'
 os.environ['LOG_LEVEL'] = 'DEBUG'
 os.environ['DEBUG'] = 'True'
