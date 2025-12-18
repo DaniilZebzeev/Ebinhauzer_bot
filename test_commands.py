@@ -10,7 +10,6 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Устанавливаем переменные окружения
-os.environ['BOT_TOKEN'] = '8203884714:AAHDI2IimFQHL7-LDUhjNRFkb6hZCvxTe2U'
 os.environ['DATABASE_URL'] = 'sqlite:///test.db'  # Используем SQLite для теста
 os.environ['DEBUG'] = 'True'
 
