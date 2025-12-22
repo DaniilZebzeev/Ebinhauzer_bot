@@ -103,15 +103,9 @@ celerybeat.pid
 
 # Environments
 .env
-.env.local
-.env.*.local
-.env.development
-.env.production
-.env.staging
 .venv
 env/
 venv/
-myenv/
 ENV/
 env.bak/
 venv.bak/
@@ -137,21 +131,11 @@ dmypy.json
 # Telegram Bot specific
 bot_token.txt
 webhook_info.json
-*_token.txt
-*_secret.txt
-credentials.json
-secrets.json
-config.local.json
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
-*.db-journal
-*.sql.backup
-*.dump
-database_backup/
-backups/
 
 # Logs
 logs/
@@ -176,13 +160,9 @@ Thumbs.db
 
 # Docker
 .dockerignore
-docker-compose.override.yml
-.docker/
-docker-secrets/
 
 # Alembic
 app/database/migrations/versions/
-!app/database/migrations/versions/.gitkeep
 
 # Redis dump
 dump.rdb
@@ -202,12 +182,9 @@ temp/
 # Backup files
 *.bak
 *.backup
-*.old
-
-# Sensitive data files
-passwords.txt
-users.txt
-api_keys.txt
-*.private
-.secrets/
-nul
+.env
+*.pyc
+__pycache__/
+.env
+*.pyc
+__pycache__/
